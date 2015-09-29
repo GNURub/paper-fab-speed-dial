@@ -1,0 +1,33 @@
+{
+  "name": "paper-fab-speed-dial",
+  "version": "1.0.0",
+  "authors": [
+    "Ruben Cid <rubencidlara@gmail.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "paper",
+    "paper speed dial"
+  ],
+  "main": "paper-fab-speed-dial.html",
+  "license": "http://opensource.org/licenses/MIT",
+  "homepage": "https://github.com/GNURub/paper-fab-speed-dial/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "neon-animation": "PolymerElements/neon-animation#~1.0.6",
+    "paper-styles": "PolymerElements/paper-styles#~1.0.11",
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "paper-fab": "PolymerElements/paper-fab#~1.0.4",
+    "web-component-tester": "*"
+  }
+}

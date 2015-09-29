@@ -1,0 +1,316 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../neon-animation/neon-animation.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+
+<!--
+An element converts a paper-fab group in a speed-dial button
+Example:
+    <paper-fab-speed-dial>
+      <paper-fab icon="add"   main></paper-fab>
+      <paper-fab icon="alarm" mini></paper-fab>
+      <paper-fab icon="shop"  mini></paper-fab>
+    </paper-fab-speed-dial>
+@element seed-element
+@demo demo.html
+-->
+<dom-module id="paper-fab-speed-dial">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host #content-main::shadow paper-fab{
+        @apply(--layout);
+        @apply(--layout-relative);
+        order: 1;
+        height: 56px;
+        position: relative;
+        line-height: 56px;
+        width: 56px;
+        z-index: 25;
+      }
+
+      #content-main{
+        height: 56px;
+        width: 56px;
+      }
+
+      :host .items-fab{
+        position: absolute;
+        z-index: 24;
+      }
+
+      :host .items-fab.hide{
+        transform: scale(0);
+      }
+
+      :host .items-fab.show /deep/ paper-fab{
+        transform: scale(1);
+      }
+
+      :host .items-fab.up{
+        bottom: 56px;
+        left: 7px;
+      }
+      :host .items-fab.up /deep/ paper-fab{
+        margin-bottom: 8px;
+      }
+      :host .items-fab.down{
+        top: 56px;
+        left: 7px;
+      }
+      :host .items-fab.down /deep/ paper-fab{
+        margin-top: 8px;
+      }
+      :host .items-fab.left{
+        right: 56px;
+        bottom: 7px;
+        -webkit-box-orient: horizontal;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+      }
+      :host .items-fab.left /deep/ paper-fab{
+        margin-right: 8px;
+      }
+      :host .items-fab.right{
+        left: 56px;
+        bottom: 7px;
+        -webkit-box-orient: horizontal;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+      }
+      :host .items-fab.right::shadow paper-fab{
+        margin-left: 8px;
+      }
+
+      :host .items-fab::shadow paper-fab{
+        position: relative;
+        /*transform: scale(0);*/
+      }
+
+
+    </style>
+    <div class="relative">
+      <!-- <paper-fab id="main" icon="{{icon}}">
+      </paper-fab> -->
+      <div id="content-main">
+        <content id="main" icon="{{icon}}" select="paper-fab[main]"></content>
+      </div>
+      <div id="items" class="items-fab hide">
+        <content  select="paper-fab:not([main])"></content>
+      </div>
+    </div>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+    var items;
+    Polymer({
+      is: 'paper-fab-speed-dial',
+
+      listeners: {
+        'content-main.click': '_toggleItems',
+        // 'content-main.mouseover': '_toggleItems',
+        'neon-animation-finish': '_onAnimationFinish'
+      },
+      properties: {
+        _opened: {
+          type: Boolean,
+          value: false
+        },
+
+        // hover:{
+        //   type: Boolean,
+        //   observer: '_hover'
+        // },
+
+
+        /**
+         * `up` Indicates that the menu will show up.
+         */
+        up: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * `left` Indicates that the menu will show left.
+         */
+        left: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * `right` Indicates that the menu will show right.
+         */
+        right: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * `down` Indicates that the menu will show down.
+         */
+        down: {
+          type: Boolean,
+          value: false
+        },
+
+        animationConfig:{
+          type: Object
+        }
+      },
+
+      observers: ['_position(up, right, down, left)'],
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      _position: function(up, right, down, left){
+        items = this._cleanClasses();
+        this.animationConfig = {
+          'entry': [
+            {
+              name: 'cascaded-animation',
+              animation: 'fade-in-animation',
+              nodes: this.$.items.children,
+              // timing: {delay: 100}
+            },
+            {
+              name: 'cascaded-animation',
+              animation: 'transform-animation',
+              nodes: this.$.items.children,
+              transformFrom: 'translateY(200%)',
+              transformTo: 'none',
+              timing: {duration: 350}
+            },
+          ],
+          'exit': [
+            {
+              name: 'cascaded-animation',
+              animation: 'fade-out-animation',
+              nodes: this.$.items.children,
+              timing: {duration: 400}
+            },
+            {
+              name: 'cascaded-animation',
+              animation: 'transform-animation',
+              nodes: this.$.items.children,
+              transformFrom: 'translateY(0)',
+              transformTo: 'translateY(200%)',
+              timing: {duration: 450}
+            },
+          ]
+        };
+
+        var entryAnimation = this.animationConfig['entry'];
+        var exitAnimation  = this.animationConfig['exit']
+
+        if(up){
+          items.classList.add('up');
+          return;
+        }
+        if(right){
+          entryAnimation[1].transformFrom = 'translateX(-200%)';
+          exitAnimation[1].transformFrom  = 'none';
+          exitAnimation[1].transformTo    = 'translateX(-200%)';
+          items.classList.add('right');
+          return;
+        }
+        if(down){
+          entryAnimation[1].transformFrom = 'translateY(-200%)';
+          exitAnimation[1].transformFrom  = 'none';
+          exitAnimation[1].transformTo    = 'translateY(-200%)';
+          items.classList.add('down');
+        }
+        if(left){
+          entryAnimation[1].transformFrom = 'translateX(200%)';
+          exitAnimation[1].transformFrom  = 'none';
+          exitAnimation[1].transformTo    = 'translateX(200%)';
+          items.classList.add('left');
+        }
+      },
+
+      _cleanClasses: function(){
+        items = this.$$('#items');
+        items.classList.remove('up');
+        items.classList.remove('down');
+        items.classList.remove('right');
+        items.classList.remove('left');
+        return items;
+      },
+
+      /**
+       * The `paper-fab-speed-dial-show` event is fired whenever `show` is called.
+       *
+       * @event paper-fab-speed-dial-show
+       */
+
+      /**
+       * Show the elements
+       */
+      show: function() {
+        items.classList.remove('hide');
+        this._opened = true;
+        this.playAnimation('entry');
+        this.fire('paper-fab-speed-dial-show');
+      },
+
+      /**
+       * The `paper-fab-speed-dial-hide` event is fired whenever `hide` is called.
+       *
+       * @event paper-fab-speed-dial-hide
+       */
+
+      /**
+       * Hide the elements
+       *
+       */
+      hide: function() {
+        items.classList.remove('hide');
+        this._opened = false;
+        this.playAnimation('exit');
+        this.fire('paper-fab-speed-dial-hide');
+      },
+
+      _toggleItems: function(e){
+        e.stopPropagation();
+        if(this.isDebouncerActive('playing')){
+          return;
+        }
+        this.debounce('playing', function() {
+
+          if(this._opened){
+            this.hide();
+          }else{
+            this.show();
+          }
+        }, 400);
+
+      },
+      _onAnimationFinish: function(){
+        if(!this._opened){
+          items.classList.add('hide');
+          return;
+        }
+        items.classList.remove('hide');
+      }
+    });
+  })();
+  </script>
+</dom-module>
