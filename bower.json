@@ -21,12 +21,19 @@
     "/demo/"
   ],
   "dependencies": {
+    "bower": "*",
+    "install": "~1.0.4",
+    "iron-iconset": "PolymerElements/iron-iconset#~1.0.3",
     "neon-animation": "PolymerElements/neon-animation#~1.0.6",
     "paper-styles": "PolymerElements/paper-styles#~1.0.11",
     "polymer": "Polymer/polymer#^1.0.0"
   },
   "devDependencies": {
+    "bower": "*",
+    "install": "~1.0.4",
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#~1.0.4",
+    "iron-iconset": "PolymerElements/iron-iconset#~1.0.3",
     "paper-fab": "PolymerElements/paper-fab#~1.0.4",
     "web-component-tester": "*"
   }
